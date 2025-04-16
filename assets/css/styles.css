@@ -111,6 +111,7 @@ a.btn-sm.btn-outline-primary:hover {
     margin-bottom: 15px;
     display: flex;
     width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 /* Fix for message content width */
@@ -271,6 +272,7 @@ a.btn-sm.btn-outline-primary:hover {
     padding: 5px 15px;
     background-color: #f3f3f3;
     border-bottom: 1px solid #e6e6e6;
+    transition: all 0.3s ease-in-out;
 }
 
 .status-human-requested {
@@ -510,6 +512,20 @@ a.btn-sm.btn-outline-primary:hover {
         padding: 2px 8px;
         margin-bottom: 4px;
     }
+    .message-content {
+        max-width: 85%;
+    }
+    
+    .quick-buttons {
+        flex-direction: column;
+        padding: 8px;
+    }
+    
+    .quick-buttons .btn {
+        margin-bottom: 5px;
+        width: 100%;
+        text-align: left;
+    }
 }
 
 /* Specific styles for customer service bubbles */
@@ -655,4 +671,92 @@ a.btn-sm.btn-outline-primary:hover {
     padding: 0 !important;
     margin-bottom: 5px !important;
     border-left: none !important;
+}
+
+/* Real-time chat animations */
+.message {
+    margin-bottom: 15px;
+    display: flex;
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animation for new messages */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading spinner for message sending */
+.sending-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Style for temporary messages before server confirmation */
+.temp-message .message-content {
+    opacity: 0.8;
+    position: relative;
+}
+
+.temp-message .message-content::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    animation: pulse 1s infinite;
+}
+
+/* Style for message IDs with temp prefix */
+[data-message-id^="temp-"] .message-content {
+    opacity: 0.8;
+}
+
+/* Pulse animation for waiting status */
+.status-human-requested .spinner-border {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    70% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+}
+
+/* Disabled state styling for chat input */
+.chat-input textarea:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
 } 

@@ -279,8 +279,8 @@ $messages = getConversationMessages($conversationId);
                         $senderName = 'Customer Service';
                     }
                     
-                    // Add proper HTML structure and classes
-                    echo '<div class="message ' . $messageClass . '">';
+                    // Add proper HTML structure and classes with message ID for real-time tracking
+                    echo '<div class="message ' . $messageClass . '" data-message-id="' . $message['id'] . '">';
                     echo '<div class="message-content">';
                     
                     // Direct styling for client messages to completely avoid Bootstrap's text-muted
@@ -339,35 +339,54 @@ $messages = getConversationMessages($conversationId);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/main.js"></script>
     <script>
-        // Scroll to bottom of chat on page load
+        // Scroll to bottom of chat on page load and initialize real-time chat
         document.addEventListener('DOMContentLoaded', function() {
+            // Scroll chat to bottom
             scrollToBottom();
-        });
-        
-        // Function to scroll chat to bottom
-        function scrollToBottom() {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-        
-        // Show confirmation modal for assistance
-        function confirmAssistance(event) {
-            event.preventDefault();
-            var myModal = new bootstrap.Modal(document.getElementById('assistanceModal'));
-            myModal.show();
-        }
-        
-        // Connect to admin with problem description
-        function connectToAdmin() {
-            const problemDescription = document.getElementById('problemDescription').value;
-            let url = 'index.php?connect_to_admin=1';
             
-            if (problemDescription.trim() !== '') {
-                url += '&problem=' + encodeURIComponent(problemDescription);
+            // Ensure real-time chat is setup
+            setupRealTimeChat();
+            
+            // Set up message form to use Ajax
+            const form = document.querySelector('.chat-input form');
+            if (form) {
+                form.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const message = this.querySelector('textarea').value.trim();
+                    if (message) {
+                        // Use the sendChatMessage function from main.js
+                        sendChatMessage(message);
+                        // Clear the input
+                        this.querySelector('textarea').value = '';
+                    }
+                });
             }
             
-            window.location.href = url;
+            // Set up quick question buttons
+            const quickButtons = document.querySelectorAll('.quick-btn');
+            if (quickButtons.length) {
+                quickButtons.forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        const question = this.getAttribute('href').split('=')[1];
+                        if (question) {
+                            sendQuickQuestion(decodeURIComponent(question));
+                        }
+                    });
+                });
+            }
+        });
+        
+        // Connect to admin with problem description via the modal
+        function connectToAdmin() {
+            const problemDescription = document.getElementById('problemDescription').value;
+            requestHumanAssistance(problemDescription);
+            
+            // Hide the modal
+            const assistanceModal = bootstrap.Modal.getInstance(document.getElementById('assistanceModal'));
+            assistanceModal.hide();
         }
     </script>
 </body>
